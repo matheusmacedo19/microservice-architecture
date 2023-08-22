@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Catalog.API.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/[controller]")]
     public class CatalogController : ControllerBase
     {
         private readonly IProductRepository _repository;
@@ -24,17 +24,14 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Product>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<IActionResult> GetProducts()
         {
             IEnumerable<Product> products = await _repository.GetProducts();
             return Ok(products);
         }
 
         [HttpGet("{id:length(24)}", Name = "GetProduct")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<Product>> GetProductById(string id)
+        public async Task<IActionResult> GetProductById(string id)
         {
             Product product = await _repository.GetProduct(id);
             if (product == null)
@@ -47,9 +44,7 @@ namespace Catalog.API.Controllers
 
         [Route("[action]/{category}", Name = "GetProductByCategory")]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Product>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProductByCategory(string category)
+        public async Task<IActionResult> GetProductByCategory(string category)
         {
             IEnumerable<Product> products = await _repository.GetProductByCategory(category);
             if(products == null)
@@ -61,8 +56,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
+        public async Task<IActionResult> CreateProduct([FromBody] Product product)
         {
             await _repository.CreateProduct(product);
 
@@ -70,23 +64,19 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateProduct([FromBody] Product product)
         {
             return Ok(await _repository.UpdateProduct(product));
         }
 
         [HttpDelete("{id:length(24)}", Name = "DeleteProduct")]
-        [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteProductById(string id)
         {
             return Ok(await _repository.DeleteProduct(id));
         }
 
         [HttpGet("{name}",Name ="GetProductByName")]
-        [ProducesResponseType(typeof(IEnumerable<Product>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<Product>> GetProductByProductName(string name)
+        public async Task<IActionResult> GetProductByProductName(string name)
         {
             IEnumerable<Product> products = await _repository.GetProductByName(name);
             if(products == null)
